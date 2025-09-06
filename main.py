@@ -9,8 +9,7 @@ import time
 import logging
 import smtplib
 from datetime import datetime
-from email.mime.text import MimeText
-from email.mime.multipart import MimeMultipart
+from email.message import EmailMessage
 
 import requests
 from bs4 import BeautifulSoup
@@ -109,19 +108,16 @@ class TicketMonitor:
     def send_email_notification(self, subject, body):
         """Send email notification."""
         try:
-            msg = MimeMultipart()
+            msg = EmailMessage()
             msg['From'] = self.email_config['email']
             msg['To'] = self.email_config['to_email']
             msg['Subject'] = subject
-            
-            msg.attach(MimeText(body, 'plain'))
+            msg.set_content(body)
             
             server = smtplib.SMTP(self.email_config['smtp_server'], self.email_config['smtp_port'])
             server.starttls()
             server.login(self.email_config['email'], self.email_config['password'])
-            
-            text = msg.as_string()
-            server.sendmail(self.email_config['email'], self.email_config['to_email'], text)
+            server.send_message(msg)
             server.quit()
             
             logger.info(f"Email sent successfully to {self.email_config['to_email']}")
