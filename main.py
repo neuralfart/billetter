@@ -5,7 +5,6 @@ Monitors the Bodø/Glimt website for ticket availability and sends notifications
 """
 
 import os
-import time
 import logging
 import smtplib
 from datetime import datetime
